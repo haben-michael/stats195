@@ -1,0 +1,6 @@
+my.mean <- function(x)
+    mean(x)
+my.var <- function(x)
+    var(x)
+my.cor <- function(x,y)
+    cor(x,y)

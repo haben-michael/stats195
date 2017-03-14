@@ -1,0 +1,52 @@
+#!/usr/bin/Rscript
+
+scores <- rep(1,3)
+names(scores) <- c('q1','q2','q3')
+max.values <- rep(1,3)
+
+print.scores <- function() {
+    for(i in 1:length(scores)) {
+        cat('Q',i,': ',scores[i],'/',max.values[i],'\n')
+    }
+}
+
+args <- commandArgs(trailingOnly=T)
+if(length(args)==0) {
+    print('usage: \'/afs/.ir/class/stats195/hw1_grade.R [name of hw1 script]\'')
+    scores <- scores*0
+    print.scores()
+    stop()
+}
+script_name <- args[1]
+
+
+err <- try(source(script_name))
+if (class(err)=='try-error') {
+    print('script fails to execute:',as.character(attr(err,'condition')))
+    scores <- scores*0
+    print.scores()
+    stop()
+}
+
+x <- rnorm(25)
+y <- rnorm(25)
+eps <- .001
+
+err <- try(
+    {if(abs(my.mean(x)-mean(x))>eps)
+         scores['q1'] <- 0},silent=T
+    )
+if(class(err)=="try-error") scores['q1'] <- 0
+err <- try(
+    {if(abs(my.var(x)-var(x))>eps)
+         scores['q2'] <- 0},silent=T
+    )
+if(class(err)=="try-error") scores['q2'] <- 0
+err <- try(
+    {if(abs(my.cor(x,y)-cor(x,y)>eps))
+         scores['q3'] <- 0},silent=T
+    )
+if(class(err)=="try-error") scores['q3'] <- 0
+
+print.scores()
+    
