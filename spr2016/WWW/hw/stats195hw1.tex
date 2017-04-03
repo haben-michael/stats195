@@ -1,0 +1,94 @@
+
+\documentclass[11pt]{article}
+\renewcommand{\baselinestretch}{1.05}
+\usepackage{amsmath,amsthm,verbatim,amssymb,amsfonts,amscd, graphicx}
+\usepackage{graphics}
+\usepackage{bbm}
+
+\topmargin0.0cm
+\headheight0.0cm
+\headsep0.0cm
+\oddsidemargin0.0cm
+\textheight23.0cm
+\textwidth16.5cm
+\footskip1.0cm
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem*{surfacecor}{Corollary 1}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{question}{Question}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+
+ \begin{document}
+
+
+
+\noindent Stats 195/CME 195 HW\#1\\
+Due April 12, 2016
+
+\bigskip
+\noindent \emph{Instructions}:\\1. Upload R script to Coursework
+dropbox using the filename $<$your SUNetid$>$stats195hw1.R). E.g., I
+would name my submission ``hgm7stats195hw1.R''.\\
+2. Name your functions/variables exactly as indicated below (e.g., ``my.mean'' for question (a)).
+
+\bigskip
+\begin{enumerate}
+\item Write a function \texttt{my.mean} to compute the average of a
+given vector of numbers. The function should work with vectors of any
+length. The average of $x_1,\ldots,x_n$ is $\frac{1}{n}\sum_1^n{x_i}$.
+
+\begin{verbatim}
+my.mean <- function(x) {
+	... # fill in computation here
+	return( ... ) # return the result here
+}
+\end{verbatim}
+
+You can check your work by comparing \texttt{my.mean} against R's mean function \texttt{mean}.
+
+\item  Write a function \texttt{my.var} to estimate the variance of a given vector of numbers. The function should work with vectors of any length.
+
+\begin{verbatim}
+my.var <- function(x) {
+	... # fill in computation here
+	return( ... ) # return the result here
+}
+\end{verbatim}
+
+ Given a set of numbers $x_1,...,x_n$, you can estimate the variance as $\frac{1}{n-1}\sum_1^n{(x_i-\bar{x})^2}$, where $\bar{x}$ is the average of $x$. Use \texttt{my.mean} to compute the average of $x$.
+
+You can check your work by comparing \texttt{my.var} against R's sample variance function \texttt{var}.
+
+\item Write a function \texttt{my.cor} to compute the correlation coefficient of two given vectors. You can assume both vectors have the same length, but your function should work whatever this shared/common length is.
+
+\begin{verbatim}
+my.cor <- function(x,y) {
+	... # fill in computation here
+	return( ... ) # return the result here
+}
+\end{verbatim}
+
+
+Compute the correlation coefficient between $x_1,\ldots,x_n$ and $y_1,\ldots,y_n$ as $\frac{ \sum{(x_i-\bar{x})(y_i-\bar{y})}} {(n-1)\sqrt{var(x)var(y)}}$, where $\bar{x}$ and $\bar{y}$ are the averages of $x$ and $y$, respectively, and $var(x)$ and $var(y)$ are variance estimates or $x$ and $y$, respectively. Use your functions $my.mean$ and $my.var$ to compute these quantities.
+
+You can check your work by comparing \texttt{my.cor} against R's Pearson correlation coefficient \texttt{cor}.
+
+\medskip
+Of course, your functions ``my.mean'', ``my.var'', etc., should not call the corresponding R functions.
+
+\item Use \texttt{rnorm} to generate two sets of 50 observations from a standard normal distribution (i.e., you should run \texttt{rnorm} twice, ending up with two vectors of length 50). Use \texttt{my.cor} to compute the correlation. What is it, and what do you expect it to be? (You don't need to record your answer to this last sentence.)
+
+
+\item \emph{Extra credit.} Repeat problem 4 100 times, recording the resulting correlation each time. That is, generate a pair of normally distributed vectors 100 times, each time computing their correlation and saving the result somewhere. So at the end you should have 100 correlations recorded. What proportion of these correlations is greater than .3 or less than -.3 ? If you used a loop in your answer to this problem (e), you should also attempt a solution without using any loop structures.
+
+
+\end{enumerate}
+
+\end{document}
