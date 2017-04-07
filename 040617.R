@@ -1,7 +1,10 @@
 ## Agenda:
+## 0. Clarificatoins from last class
 ## 1. Conditionals
 ## 2. Iteration
 
+## 0a. Student question about overlaying plots -- line and point
+## 0b. abline overloading on lm
 
 ## Up until now we have mainly been using R interactively, something
 ## like a very elaborate calculator. R is also a full featured
