@@ -206,9 +206,45 @@ matplot(t(samples),xlab="sample size",ylab="MC estimate",
 
 ## EX: add a line for R's numerical integration
 
+## Computing pi came up during the first class
+total <- 3e6
+num.inside <- 0
+for(i in 1:total) {
+    x <- runif(1)
+    y <- runif(1)
+    if(sqrt(x^2+y^2)<=1) num.inside <- num.inside+1
+}
 
+print(4*num.inside/total)
 
+## EX: vectorize the pi approximation
 
+## Reassigning assignment -- student question about warning when overwriting a constant or variable
+
+`<-`  ## backtick to reference an operator
+`=`
+`+`
+`+`(3,5)
+
+`+` <- function(e1,e2)e1*e2
+3+5
+`+` <- `/`
+5+2
+
+ls() ## list named objects in the environment
+yy <- 3
+ls()
+deparse(substitute(yy))
+deparse(substitute(yy)) %in% ls()
+
+old.assign <- `<-`
+new.assign <- function(e1,e2) {
+    string.name <- deparse(substitute(e1))
+    if(e1=='pi') warning(paste0(e1,'already assigned'))
+    ## if(e1 %in% ls()) ...
+    ## call original function
+    ## ...
+}
 
 ################################################
 ## 2. Dataset manipulation
