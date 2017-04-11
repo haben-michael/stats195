@@ -275,45 +275,115 @@ scan("text.txt")
 ## format. You can also save/retrieve your entire workspace using
 ## "save.image" and "load.image".
 
-emails.dat <- read.csv('Emails.csv')
-str(emails.dat) ## all strings interpreted as factors
-emails.dat <- read.csv('Emails.csv',stringsAsFactors=F)
-str(emails.dat)
-
-## would like to get most common recipients
-
-to.table <- table(emails.dat$MetadataTo)
-head(to.table)
-
-## sorting data
-(x <- sample(1:10,10))
-order(x)
-order(x,decreasing=T)
-mtcars
-mtcars[order(mtcars$cyl),]
-mtcars[order(mtcars$cyl,mtcars$mpg),]
-
-## EX: sort "to.table" to put the most common recipients first
 
 
-## get list of most common senders and sort
-from.table <- table(emails.dat$MetadataFrom)
-from.table <- from.table[order(from.table,decreasing=T)]
+food <- read.csv('food-world-cup-data.csv')
+
+
+US.idx <- which('Please.rate.how.much.you.like.the.traditional.cuisine.of.United.States.'==colnames(food))
+MX.idx <- which('Please.rate.how.much.you.like.the.traditional.cuisine.of.Mexico.'==colnames(food))
+knowledge.idx <- 2
+interest.idx <- 3
+## once we lookat text processing, we will learn the more common way to carry out the previous lines
+food <- food[,c(knowledge.idx,interest.idx,US.idx,MX.idx)]
+colnames(food) <- c('knowledge','interest','US','MX')
+
+levels(food$knowledge)
+table(food$knowledge)
+food$knowledge <- as.integer(food$knowledge)
+table(food$knowledge)
+food$knowledge <- 4 - food$knowledge + 1
+
+levels(food$interest)
+food$interest <- factor(food$interest, levels=levels(food$interest)[c(2,3,4,1)])
+
+## EX: "These questions were on a four-point scale, where a four indicated
+## the greatest amount of interest and knowledge and a one the least
+## amount. The weight given to a voter was calculated as the sum of
+## these two scores, minus two." Convert the "interest" column also,
+## then create the weight column.
+
+food$interest <- as.integer(food$interest)
+table(food$interest)
+food$weight <- food$interest + food$knowledge - 2
+
+## EX: "The results we'll show you are solely among people who had an opinion
+## about both cuisines in a particular matchup. We call this the "turnout
+## rate," and it varied anywhere from 7 percent to 65 percent depending
+## on the matchup." Remove the rows with NAs from "food" after saving them in a dataframe "food.NA"
+
+food.NA <- food[(food$US=='N/A') | (food$MX=='N/A'),]
+food <- food[(food$US != 'N/A') & (food$MX != 'N/A'),] ## see "na.omit","drop.levels"
+food$US <- as.integer(food$US)
+food$MX <- as.integer(food$MX)
+table(food$MX)
+table(food.NA$weight)
+
+food$MX.greater <- food$MX > food$US
+str(food$MX.greater)
+food$MX.greater <- food$MX.greater * food$weight
+food$US.greater <-  (food$MX < food$US) * food$weight
+food$equal <- (food$MX==food$US) * food$weight
+str(food)
+counts <- as.matrix(food[,c('US.greater','MX.greater','equal')])
+xtabs(counts ~ food$weight)
+str(xtabs(counts ~ food$weight))
+
+xtabs0 <- xtabs(counts ~ food$weight)
+rowSums(xtabs0)
+table(food.NA$weight)
+rowSums(xtabs0) + table(food.NA$weight)
+NAs <- table(food.NA$weight)
+str(NAs)
+NAs[7] <- 0
+names(NAs) <- 0:6
+NAs
+denom <- rowSums(xtabs0) + NAs
+xtabs0 <- xtabs0 / denom
+
+plot(rownames(xtabs0), xtabs0[,'US.greater'], type='l',col='blue')
+lines(rownames(xtabs0), xtabs0[,'MX.greater'], type='l',col='green')
+
+## SKIP 2017
+## emails.dat <- read.csv('Emails.csv')
+## str(emails.dat) ## all strings interpreted as factors
+## emails.dat <- read.csv('Emails.csv',stringsAsFactors=F)
+## str(emails.dat)
+
+## ## would like to get most common recipients
+
+## to.table <- table(emails.dat$MetadataTo)
+## head(to.table)
+
+## ## sorting data
+## (x <- sample(1:10,10))
+## order(x)
+## order(x,decreasing=T)
+## mtcars
+## mtcars[order(mtcars$cyl),]
+## mtcars[order(mtcars$cyl,mtcars$mpg),]
+
+## ## EX: sort "to.table" to put the most common recipients first
+
+
+## ## get list of most common senders and sort
+## from.table <- table(emails.dat$MetadataFrom)
+## from.table <- from.table[order(from.table,decreasing=T)]
 
 
 
-barplot(to.table[c(2,3,4,6,7)],col='blue')
-require(wordcloud)
-wordcloud(names(to.table))
+## barplot(to.table[c(2,3,4,6,7)],col='blue')
+## require(wordcloud)
+## wordcloud(names(to.table))
 
-## convert to data frames and join
-names(to.table)
-to.df <- data.frame(name=names(to.table),to.count=as.numeric(to.table))
-from.df <- data.frame(name=names(from.table),from.count=as.numeric(from.table))
+## ## convert to data frames and join
+## names(to.table)
+## to.df <- data.frame(name=names(to.table),to.count=as.numeric(to.table))
+## from.df <- data.frame(name=names(from.table),from.count=as.numeric(from.table))
 
-to.from <- merge(to.df,from.df,by='name')
+## to.from <- merge(to.df,from.df,by='name')
 
-to.from <- to.from[order(to.from$to.count,decreasing=T),]
+## to.from <- to.from[order(to.from$to.count,decreasing=T),]
 
 
 

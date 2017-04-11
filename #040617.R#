@@ -309,3 +309,19 @@ food$equal <- (food$MX==food$US) * food$weight
 str(food)
 counts <- as.matrix(food[,c('US.greater','MX.greater','equal')])
 xtabs(counts ~ food$weight)
+str(xtabs(counts ~ food$weight))
+
+xtabs0 <- xtabs(counts ~ food$weight)
+rowSums(xtabs0)
+table(food.NA$weight)
+rowSums(xtabs0) + table(food.NA$weight)
+NAs <- table(food.NA$weight)
+str(NAs)
+NAs[7] <- 0
+names(NAs) <- 0:6
+NAs
+denom <- rowSums(xtabs0) + NAs
+xtabs0 <- xtabs0 / denom
+
+plot(rownames(xtabs0), xtabs0[,'US.greater'], type='l',col='blue')
+lines(rownames(xtabs0), xtabs0[,'MX.greater'], type='l',col='green')
