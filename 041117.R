@@ -257,12 +257,8 @@ new.assign <- function(e1,e2) {
 ## entries should be interpreted as factors. Note that you can
 ## pass these routines various URLs, not just a file (the default).
 
-## FERC site:
-## http://www.ferc.gov/docs-filing/eqr/soft-tools/sample-csv.asp
-
-dat <-
-  read.csv("http://www.ferc.gov/docs-filing/eqr/soft-tools/sample-csv/contract.txt",header=T)
-str(dat)
+names <- read.csv('https://files.ontario.ca/opendata/ontariotopbabynames_female_1917-2013_english.csv') ## check header parse
+str(names)
 
 ## You can use "write" and "scan" to save and retrieve one or two
 ## dimensional data in a not quite standard text format using whitespace.
@@ -276,8 +272,10 @@ scan("text.txt")
 ## "save.image" and "load.image".
 
 
+## Let's try to recreate the US vs Mexico plot at:
+## https://fivethirtyeight.com/features/what-is-americans-favorite-global-cuisine/
 
-food <- read.csv('food-world-cup-data.csv')
+food <- read.csv('food-world-cup-data.csv') ## from github
 
 
 US.idx <- which('Please.rate.how.much.you.like.the.traditional.cuisine.of.United.States.'==colnames(food))
@@ -290,9 +288,9 @@ colnames(food) <- c('knowledge','interest','US','MX')
 
 levels(food$knowledge)
 table(food$knowledge)
+food$knowledge <- factor(food$knowledge, levels=levels(food$knowledge)[c(4,3,1,2)])
 food$knowledge <- as.integer(food$knowledge)
 table(food$knowledge)
-food$knowledge <- 4 - food$knowledge + 1
 
 levels(food$interest)
 food$interest <- factor(food$interest, levels=levels(food$interest)[c(2,3,4,1)])
@@ -300,17 +298,17 @@ food$interest <- factor(food$interest, levels=levels(food$interest)[c(2,3,4,1)])
 ## EX: "These questions were on a four-point scale, where a four indicated
 ## the greatest amount of interest and knowledge and a one the least
 ## amount. The weight given to a voter was calculated as the sum of
-## these two scores, minus two." Convert the "interest" column also,
+## these two scores, minus two." Convert the "interest" column to the integer scale,
 ## then create the weight column.
 
-food$interest <- as.integer(food$interest)
-table(food$interest)
-food$weight <- food$interest + food$knowledge - 2
+
 
 ## EX: "The results we'll show you are solely among people who had an opinion
 ## about both cuisines in a particular matchup. We call this the "turnout
 ## rate," and it varied anywhere from 7 percent to 65 percent depending
-## on the matchup." Remove the rows with NAs from "food" after saving them in a dataframe "food.NA"
+## on the matchup." Remove the rows with NAs from "food" after saving them in a dataframe "food.NA". You may need to use the boolean operators "|" ("or", disjunction) and/or "&" ("and", conjunction).
+
+head(food, 25)
 
 food.NA <- food[(food$US=='N/A') | (food$MX=='N/A'),]
 food <- food[(food$US != 'N/A') & (food$MX != 'N/A'),] ## see "na.omit","drop.levels"
@@ -321,11 +319,12 @@ table(food.NA$weight)
 
 food$MX.greater <- food$MX > food$US
 str(food$MX.greater)
-food$MX.greater <- food$MX.greater * food$weight
-food$US.greater <-  (food$MX < food$US) * food$weight
-food$equal <- (food$MX==food$US) * food$weight
+food$MX.greater <- food$MX.greater * (food$weight+1) ## how to weight scores?
+food$US.greater <-  (food$MX < food$US) * (food$weight+1)
+food$equal <- (food$MX==food$US) * (food$weight+1)
 str(food)
 counts <- as.matrix(food[,c('US.greater','MX.greater','equal')])
+head(counts)
 xtabs(counts ~ food$weight)
 str(xtabs(counts ~ food$weight))
 
@@ -333,16 +332,32 @@ xtabs0 <- xtabs(counts ~ food$weight)
 rowSums(xtabs0)
 table(food.NA$weight)
 rowSums(xtabs0) + table(food.NA$weight)
-NAs <- table(food.NA$weight)
-str(NAs)
-NAs[7] <- 0
-names(NAs) <- 0:6
-NAs
-denom <- rowSums(xtabs0) + NAs
+NA.table <- c(table(food.NA$weight),'5'=0)
+
+## EX: Reorder "NA.table" so that the weights are increasing.
+
+denom <- rowSums(xtabs0) + NA.table
 xtabs0 <- xtabs0 / denom
+NA.table <- NA.table / denom
 
 plot(rownames(xtabs0), xtabs0[,'US.greater'], type='l',col='blue')
-lines(rownames(xtabs0), xtabs0[,'MX.greater'], type='l',col='green')
+plot(rownames(xtabs0), xtabs0[,'US.greater'], type='l',col='blue',ylim=c(0,1),xlab='',ylab='')
+plot(rownames(xtabs0), xtabs0[,'US.greater'], type='o',col='blue',ylim=c(0,1))
+plot(rownames(xtabs0), xtabs0[,'US.greater'], type='o',col='blue',ylim=c(0,1),lwd=4)
+
+## EX: Add with a green line the corresponding proportions for MX.
+
+
+lines(names(NA.table), NA.table, type='o',col='darkgray',lwd=4)
+title("U.S. vs. Mexico\nShare of vote by likely eater score",cex=4,adj=0)
+## See ?par for the graphical parameters. I'm not sure how to have multiple font sizes within a title.
+text(x=2.5,y=.4,"U.S.",col='blue',cex=1.5)
+## EX: Add corresponding labels for MX and Undecided.
+
+legend('topright', col=c("blue","green","darkgray"), lty=1, lwd=4, legend=c("U.S.","Mexico","Undecided"))
+
+## Unfortunately, formatting the vertical axis labels to appear as percentages is messy, see, e.g., http://stackoverflow.com/questions/7848078/format-numbers-in-charts-as-percentages .
+
 
 ## SKIP 2017
 ## emails.dat <- read.csv('Emails.csv')
