@@ -356,7 +356,7 @@ text(x=2.5,y=.4,"U.S.",col='blue',cex=1.5)
 
 legend('topright', col=c("blue","green","darkgray"), lty=1, lwd=4, legend=c("U.S.","Mexico","Undecided"))
 
-## Unfortunately, formatting the vertical axis labels to appear as percentages is messy, see, e.g., http://stackoverflow.com/questions/7848078/format-numbers-in-charts-as-percentages .
+## Unfortunately, formatting the vertical axis labels to appear as percentages is messy, see, e.g., http://stackoverflow.com/questions/7848078/format-numbers-in-charts-as-percentages . Likewise for changing the font family.
 
 
 ## SKIP 2017
