@@ -237,14 +237,20 @@ ls()
 deparse(substitute(yy))
 deparse(substitute(yy)) %in% ls()
 
-old.assign <- `<-`
 new.assign <- function(e1,e2) {
-    string.name <- deparse(substitute(e1))
-    if(e1=='pi') warning(paste0(e1,'already assigned'))
-    ## if(e1 %in% ls()) ...
-    ## call original function
+    ## string.name <- deparse(substitute(e1)) ## not run
+    assign('string.name', deparse(substitute(e1)))
+    ## check if e1 is assigned to a constant
+    if(string.name=='pi') warning(paste(string.name,'already assigned'))
+    ## check if e1 is assigned to a variable
+    if(string.name %in% ls(envir=.GlobalEnv)) warning(paste(string.name,'already assigned'))
+    ## call usual assignment function
+    ## old.assign(e1,e2) ## not run
+    assign(string.name,e2,envir=.GlobalEnv)
     ## ...
 }
+old.assign <- `<-`
+old.assign(`<-`, new.assign)
 
 ################################################
 ## 2. Dataset manipulation
@@ -302,7 +308,6 @@ food$interest <- factor(food$interest, levels=levels(food$interest)[c(2,3,4,1)])
 ## then create the weight column.
 
 
-
 ## EX: "The results we'll show you are solely among people who had an opinion
 ## about both cuisines in a particular matchup. We call this the "turnout
 ## rate," and it varied anywhere from 7 percent to 65 percent depending
@@ -357,6 +362,8 @@ text(x=2.5,y=.4,"U.S.",col='blue',cex=1.5)
 legend('topright', col=c("blue","green","darkgray"), lty=1, lwd=4, legend=c("U.S.","Mexico","Undecided"))
 
 ## Unfortunately, formatting the vertical axis labels to appear as percentages is messy, see, e.g., http://stackoverflow.com/questions/7848078/format-numbers-in-charts-as-percentages . Likewise for changing the font family.
+
+
 
 
 ## SKIP 2017
