@@ -383,7 +383,7 @@ legend('topright', col=c("blue","green","darkgray"), lty=1, lwd=4, legend=c("U.S
 ## order(x,decreasing=T)
 ## mtcars
 ## mtcars[order(mtcars$cyl),]
-## mtcars[order(mtcars$cyl,mtcars$mpg),]
+  ## mtcars[order(mtcars$cyl,mtcars$mpg),]
 
 ## ## EX: sort "to.table" to put the most common recipients first
 

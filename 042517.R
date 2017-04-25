@@ -10,9 +10,9 @@
 ## Most data scrapes begin by inspecting and experimenting with the target
 ## site's structure. This can be tedious, the methods are ad hoc, and
 ## you may violate the site's terms of service. From playing with
-## youtube's searches and looking at the results pages, I found that
+## youtube's searches and looking at the results pages, it looks like
 ## 1) youtube appears to assign all videos an 11-character ID and 2)
-## you can pull the results for all videos the IDs that have a
+## you can pull the results for all videos with IDs that have a
 ## given prefix "***" by doing a search for "watch?v=***" (quotes
 ## included in search string), which is URL encoded as
 ## %22watch%3Fv%3D***%22". [[UPDATE SPR '16: The search string now
@@ -35,7 +35,7 @@ hits.html[1]
 
 match.idx <- grep("num-results",hits.html)
 match <- regexpr("num-results[^0-9]*[[:digit:]]+",hits.html[match.idx])
-g extraction
+## get all matches
 (match <-
     regexec("num-results[^0-9]*([[:digit:]]+)",hits.html[match.idx]))
 num.results <-
@@ -90,6 +90,8 @@ for (prefix in id.alphabet[1:5]) {
 
   ## extract number of results
   ## EX: Use an appropriate regex to extract the number of hits.
+  match <-
+      str_match(hits.html[match.idx],"num-results[^0-9]*((\\d)+)")
   num.results <- match[2]
   ## EX: Process the regex so that it maybe converted to a number.
   num.results <- as.numeric(num.results)
@@ -102,7 +104,7 @@ for (prefix in id.alphabet[1:5]) {
 
 print(sum) # does this look right?
 ## ***non uniformity re initial underscore, diff bw initial/
-## non-initial cahr
+## non-initial char
 ## ** test for uniformity
 
 ## More generally: have R pull the number of results
@@ -188,7 +190,7 @@ get.hits <- function(id.prefix) {
 
 
 id.alphabet <- c(letters,0:9)
-N.searches <- 10
+N.searches <- 5
 prefix.length <- 4
 counts <- numeric(0)
 
@@ -227,7 +229,6 @@ for (i in 1:N.searches) {
 
   Sys.sleep(1)
 }
-
 
 
 ##write(counts,file="/gdrive/stanford/stats195/counts.txt")
@@ -280,7 +281,7 @@ points(u,v,type="l",col="red")
 
 
 
-## ## Lindsey's method to estimate kernel density
+## ## kernel density estimate
 ## bins <- seq(from=min(counts)-0.5,to=max(counts),length.out=1e3)
 ## binned <- cut(counts,breaks=bins)
 
